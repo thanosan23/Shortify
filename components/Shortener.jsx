@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 
 const Shortener = () => {
     let [tinyURL, setTinyURL] = useState("");
@@ -6,19 +7,21 @@ const Shortener = () => {
     const handleClick = () => {
         const url = document.getElementById("url").value;
         const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
-        const response = fetch("https://api.tinyurl.com/create", {
-            method: 'POST',
+
+        let data = JSON.stringify({url : url});
+        
+        axios.post("https://api.tinyurl.com/create", data, {
             headers: {
                 'Authorization': `Bearer ${API_KEY}`,
                 'Content-Type': 'application/json',
                 'accept': 'application/json'
-            },
-            body: JSON.stringify({url: url}),
+            }
         }).then((response) => {
-            return response.json();
-        }).then((data) => {
-            setTinyURL(data["data"]["tiny_url"]);
-        })
+            console.log(response);
+            setTinyURL(response["data"]["data"]["tiny_url"]);
+        }).catch((error) => {
+            console.log(error);
+        });
     };
 
     return (
